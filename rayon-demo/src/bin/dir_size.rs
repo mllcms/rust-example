@@ -1,9 +1,8 @@
+use rayon::prelude::*;
 use std::fs;
 use std::path::Path;
 use std::sync::atomic::{AtomicU64, Ordering};
 use std::time::Instant;
-
-use rayon::prelude::*;
 
 fn main() {
     let begin = Instant::now();
