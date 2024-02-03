@@ -1,7 +1,8 @@
 use std::fs::File;
 use std::io::Write;
 use std::os::windows::fs::OpenOptionsExt;
-use std::{env, io, process};
+use std::time::Duration;
+use std::{env, io, process, thread};
 
 pub struct SingApp {
     #[allow(unused)]
@@ -46,6 +47,8 @@ impl SingApp {
                     .arg("/PID")
                     .arg(pid)
                     .output()?;
+
+                thread::sleep(Duration::from_millis(500));
                 let mut lock = Self::lock()?;
                 write!(&mut lock, "{}", process::id())?;
                 Ok(Self { lock })
