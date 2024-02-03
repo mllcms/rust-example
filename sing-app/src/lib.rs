@@ -1,4 +1,7 @@
-use std::{env, fs::File, io, io::Write, os::windows::fs::OpenOptionsExt, process};
+use std::fs::File;
+use std::io::Write;
+use std::os::windows::fs::OpenOptionsExt;
+use std::{env, io, process};
 
 pub struct SingApp {
     #[allow(unused)]
@@ -7,7 +10,7 @@ pub struct SingApp {
 
 #[cfg(target_os = "windows")]
 impl SingApp {
-    pub fn new() -> io::Result<File> {
+    pub fn lock() -> io::Result<File> {
         let path = env::current_exe().unwrap();
         File::options()
             .read(true)
@@ -18,7 +21,7 @@ impl SingApp {
     }
 
     pub fn run() -> Self {
-        match Self::new() {
+        match Self::lock() {
             Ok(lock) => Self { lock },
             Err(err) => {
                 eprintln!("{err}");
@@ -28,7 +31,7 @@ impl SingApp {
     }
 
     pub fn run_current() -> io::Result<Self> {
-        match Self::new() {
+        match Self::lock() {
             Ok(mut lock) => {
                 write!(&mut lock, "{}", process::id())?;
                 Ok(Self { lock })
@@ -43,7 +46,7 @@ impl SingApp {
                     .arg("/PID")
                     .arg(pid)
                     .output()?;
-                let mut lock = Self::new()?;
+                let mut lock = Self::lock()?;
                 write!(&mut lock, "{}", process::id())?;
                 Ok(Self { lock })
             }
